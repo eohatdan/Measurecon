@@ -6,3 +6,4 @@ This module illustrates how to do the following:
 - Convert between units of measure using the dictionary and the technique of having a common measure (cubic centimeters) to avoid the O(n^2) possible combinations.
 - Using TKinter as a means of creating a GUI for the module.
 - Importing a class from a different module.
+Note: Conversion of unit of measure to Joules is under development.
