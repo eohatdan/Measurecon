@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Liquid Measure Converter</title>
+    <style>
+        label {
+        display: inline-block;
+        width: 150px;
+        text-align: right;
+        }
+    </style>
+    <h1>Liquid Measure Converter</h1>
+    
+    <form>
+        <label for="from_unit">Convert from:</label>
+        <input id="from_unit" type="text" name="from_unit"><br><br>
+        <label for="to_unit">Convert to:    </label>
+        <input id="to_unit" type="text" name="to_unit"><br><br>
+        <label for="qty">Quantity:    </label>
+        <input id="qty" type="text" name="qty"><br><br>
+    </form>
+       
+    </head>
+    <body onload="brython()">
+    <button id="button_dialog">Convert:</button>
+    <div id="container"></div>
+    <div id="zone01" class="zone"></div>
+        <script type="text/javascript" src="brython.js"></script>
+        <script type="text/javascript" src="brython_stdlib.js"></script>
+
+        <script type="text/python">
+            # First of all, the import of some libraries
+            import browser
+            from browser import document
+            from browser.html import TABLE,TR,TD
+            from browser.widgets.dialog import InfoDialog
+            import Measurecon 
+            from Measurecon import LM
+            input01 = ''
+            input02 = ''
+            input03 = 0
+            
+            def norm(value):
+                return(value.strip().lower()) # Returns input in lowercase with leading/trailing blanks removed.
+            def add_row(table,field_name,separator,value):
+                row = TR()
+                row <= TD(field_name + separator + value)
+                table <= row
+            def convert(ev):
+                global input01
+                global input02
+                global input03
+                input01 = norm(document["from_unit"].value)
+                input02 = norm(document["to_unit"].value)
+                input03 = norm(document["qty"].value)
+                result_flt = float(LM.dispatcher(input01,input02,input03,"lmdict.json")) # Do the conversion from_unit to to_unit.
+                result_str = str(result_flt)
+                table = TABLE()
+                table.clear
+                add_row(table,"From unit",": ",input01)
+                add_row(table,"To unit  ",": ",input02)
+                add_row(table,"Quantity ",": ",input03)
+                add_row(table," "," "," ")
+                if int(input03) > 1:
+                    suffix_in = 's'
+                else: suffix_in = ''
+                if result_flt > 1.0:
+                    suffix_out = 's'
+                else: suffix_out = ''
+                parm03 = ''
+                parm04 = ''
+                add_row(table,f'{input03} {input01}{suffix_in} = {result_str} {input02} {suffix_out}',parm03,parm04)
+                joules_str = str(LM.convert_to_joules(input02,float(input03)))
+                add_row(table,f'There are {joules_str} joules in {input03} {input01}s',parm03,parm04)
+                document["zone01"].clear
+                document["zone01"] <= table
+            document["button_dialog"].bind("click",convert)
+
+        </script>
+    </body>
+</html>
